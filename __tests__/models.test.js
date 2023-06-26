@@ -44,12 +44,13 @@ describe('GET/api/', () => {
 });
 
 describe('GET/api/articles/:article_id', () => {
-  test('200: responds with particular article by ID provided id', () => {
+  test('200: responds with a particular article by id provided in the url', () => {
     return request(app)
       .get('/api/articles/1')
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
+        console.log(article);
         expect(article).toHaveProperty('article_id', expect.any(Number));
         expect(article).toHaveProperty('title', expect.any(String));
         expect(article).toHaveProperty('topic', expect.any(String));
@@ -59,7 +60,5 @@ describe('GET/api/articles/:article_id', () => {
         expect(article).toHaveProperty('votes', expect.any(Number));
         expect(article).toHaveProperty('article_img_url', expect.any(String));
       });
-
   });
-
 });
