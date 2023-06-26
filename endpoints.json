@@ -25,5 +25,12 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description" : "serves a particular article by its ID",
+    "queries": [],
+    "exampleResponse": {
+      "article": {}
+    }
   }
 }

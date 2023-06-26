@@ -42,3 +42,18 @@ describe('GET/api/', () => {
       });
   });
 });
+
+describe('GET//api/articles/:article_id', () => {
+  test('200: responds with particular article by ID provided id', () => {
+    return request(app)
+      .get('/api/articles/1')
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toHaveProperty('article_id', expect.any(Number));
+
+      });
+
+  });
+
+});
