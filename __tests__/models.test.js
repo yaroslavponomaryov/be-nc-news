@@ -31,19 +31,14 @@ describe('GET/api/topics', () => {
 
 describe('GET/api/', () => {
   test('200: responds with an object describing all the available endpoints', () => {
+
     return request(app)
       .get('/api/')
       .expect(200)
       .then(({ body }) => {
+        const actualEndpoints = require('../endpoints.json');
         const { endpoints } = body;
-        return endpoints
-      })
-      .then((endpoints) => {
-        return fs.readFile('./endpoints.json', 'utf-8')
-        .then((data) => {
-          const actualEndpoints = JSON.parse(data)
-          expect(actualEndpoints).toEqual(endpoints);
-        });
+        expect(endpoints).toEqual(actualEndpoints);
       });
   });
 });
