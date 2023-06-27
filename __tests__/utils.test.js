@@ -4,6 +4,8 @@ const {
   formatComments,
 } = require("../db/seeds/utils");
 
+const { arrangeCommentsAndArticles } = require("../models/utils");
+
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
     const timestamp = 1557572706232;
@@ -100,5 +102,120 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+  });
+});
+
+describe ('arrangeCommentsAndArticles', () => {
+  let inputComments;
+  let inputCommentsCopy;
+  let inputArticles;
+  let inputArticlesCopy;
+  let expected;
+  beforeEach(() => {
+    inputComments = [
+      { article_id: 9, comment_id: 1 },
+      { article_id: 1, comment_id: 2 },
+      { article_id: 1, comment_id: 3 },
+      { article_id: 1, comment_id: 4 },
+      { article_id: 1, comment_id: 5 },
+      { article_id: 1, comment_id: 6 },
+      { article_id: 1, comment_id: 7 },
+      { article_id: 1, comment_id: 8 },
+      { article_id: 1, comment_id: 9 },
+      { article_id: 3, comment_id: 10 },
+      { article_id: 3, comment_id: 11 },
+      { article_id: 1, comment_id: 12 },
+      { article_id: 1, comment_id: 13 },
+      { article_id: 5, comment_id: 14 },
+      { article_id: 5, comment_id: 15 },
+      { article_id: 6, comment_id: 16 },
+      { article_id: 9, comment_id: 17 },
+      { article_id: 1, comment_id: 18 }
+    ];
+    inputCommentsCopy = [
+      { article_id: 9, comment_id: 1 },
+      { article_id: 1, comment_id: 2 },
+      { article_id: 1, comment_id: 3 },
+      { article_id: 1, comment_id: 4 },
+      { article_id: 1, comment_id: 5 },
+      { article_id: 1, comment_id: 6 },
+      { article_id: 1, comment_id: 7 },
+      { article_id: 1, comment_id: 8 },
+      { article_id: 1, comment_id: 9 },
+      { article_id: 3, comment_id: 10 },
+      { article_id: 3, comment_id: 11 },
+      { article_id: 1, comment_id: 12 },
+      { article_id: 1, comment_id: 13 },
+      { article_id: 5, comment_id: 14 },
+      { article_id: 5, comment_id: 15 },
+      { article_id: 6, comment_id: 16 },
+      { article_id: 9, comment_id: 17 },
+      { article_id: 1, comment_id: 18 }
+    ];
+    inputArticles = [
+      { article_id: 1 },
+      { article_id: 2 },
+      { article_id: 3 },
+      { article_id: 4 },
+      { article_id: 5 },
+      { article_id: 6 },
+      { article_id: 7 },
+      { article_id: 8 },
+      { article_id: 9 },
+      { article_id: 10 },
+      { article_id: 11 },
+      { article_id: 12 },
+      { article_id: 13 }
+    ]
+    inputArticlesCopy = [
+      { article_id: 1 },
+      { article_id: 2 },
+      { article_id: 3 },
+      { article_id: 4 },
+      { article_id: 5 },
+      { article_id: 6 },
+      { article_id: 7 },
+      { article_id: 8 },
+      { article_id: 9 },
+      { article_id: 10 },
+      { article_id: 11 },
+      { article_id: 12 },
+      { article_id: 13 }
+    ]
+    expected = {
+      '1': 11,
+      '2': 0,
+      '3': 2,
+      '4': 0,
+      '5': 2,
+      '6': 1,
+      '7': 0,
+      '8': 0,
+      '9': 2,
+      '10': 0,
+      '11': 0,
+      '12': 0,
+      '13': 0
+    }
+  });
+  test('returns correct reference object', () => {
+    const actual = arrangeCommentsAndArticles(inputComments, inputArticles);
+    expect(actual).toEqual(expected);
+  });
+  test('returns a NEW object', () => {
+    const actual = arrangeCommentsAndArticles(inputComments, inputArticles);
+    expect(actual).not.toBe(inputComments);
+    expect(actual).not.toBe(inputArticles);
+  });
+  test('does not mutate original arrays and objects', () => {
+    arrangeCommentsAndArticles(inputComments, inputArticles);
+    expect(inputComments).toEqual(inputCommentsCopy);
+    expect(inputArticles).toEqual(inputArticlesCopy);
+    for(let i = 0; i < inputComments.length; i ++) {
+      expect(inputComments[i]).toEqual(inputCommentsCopy[i]);
+    }
+    for(let i = 0; i < inputArticles.length; i ++) {
+      expect(inputArticles[i]).toEqual(inputArticlesCopy[i]);
+    }
   });
 });
