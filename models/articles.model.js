@@ -7,6 +7,7 @@ exports.fetchArticleById = (articleId) => {
     `
     return db.query(query, [articleId])
     .then(({ rows }) => {
-        return rows[0];
+        if (!rows.length) return Promise.reject({status: 404, msg: 'Not found'})
+        else return rows[0];
     });
 };
