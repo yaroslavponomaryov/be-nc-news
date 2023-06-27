@@ -50,8 +50,7 @@ describe('GET/api/articles/:article_id', () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        console.log(article);
-        expect(article).toHaveProperty('article_id', expect.any(Number));
+        expect(article).toHaveProperty('article_id', 1);
         expect(article).toHaveProperty('title', expect.any(String));
         expect(article).toHaveProperty('topic', expect.any(String));
         expect(article).toHaveProperty('author', expect.any(String));
@@ -59,6 +58,35 @@ describe('GET/api/articles/:article_id', () => {
         expect(article).toHaveProperty('created_at', expect.any(String));
         expect(article).toHaveProperty('votes', expect.any(Number));
         expect(article).toHaveProperty('article_img_url', expect.any(String));
+      });
+  });
+
+  test('400: throws "Bad request" error if NaN', () => {
+    return request(app)
+      .get('/api/articles/NaN')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+
+  test('404: throws "Not found" when valid id, but does not exist', () => {
+    return request(app)
+      .get('/api/articles/170')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+  });
+});
+
+describe('ALL/wrong_path/, responds with Not found', () => {
+  test('404: reponds with "Not found" error when invalid path', () => {
+    return request(app)
+      .get('/nonsense/')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found')
       });
   });
 });
