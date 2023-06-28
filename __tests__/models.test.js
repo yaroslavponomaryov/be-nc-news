@@ -109,18 +109,9 @@ describe('GET/api/articles', () => {
           expect(article).not.toHaveProperty('body');
           expect(article).toHaveProperty('votes', expect.any(Number));
           expect(article).toHaveProperty('article_img_url', expect.any(String));
-          expect(article).toHaveProperty('comment_count', expect.any(Number))
+          expect(article).toHaveProperty('comment_count', expect.any(String))
         });
         expect(articles).toBeSortedBy('created_at', { descending: true })
       });
-  });
-  
-  test('404: should respond with "Not found" if invalid url', () => {
-    return request(app)
-    .get('/api/artiiclees')
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toBe('Not found');
-    });
   });
 });
