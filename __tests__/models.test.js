@@ -91,7 +91,7 @@ describe('ALL/wrong_path/, responds with Not found', () => {
   });
 });
 
-describe.only('GET/api/articles/:article_id/comments', () => {
+describe('GET/api/articles/:article_id/comments', () => {
   test('200: responds with an array of comments for the given article_id; each object should have correct properties', () => {
     return request(app)
       .get('/api/articles/1/comments')
@@ -108,6 +108,23 @@ describe.only('GET/api/articles/:article_id/comments', () => {
           expect(comment).toHaveProperty('article_id', expect.any(Number));
         });
         expect(comments).toBeSortedBy('created_at', {descending: true});
+      });
+  });
+  test('404: responds with "Not found" if valid article_id, but article does not exist', () => {
+    return request(app)
+      .get('/api/articles/190/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+  });
+  test('400: responds with "Bad request" when article_id is NaN', () => {
+    return request(app)
+      .get('/api/articles/NaN/comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request')
+
       });
   });
 });
