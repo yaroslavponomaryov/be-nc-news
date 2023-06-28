@@ -90,3 +90,24 @@ describe('ALL/wrong_path/, responds with Not found', () => {
       });
   });
 });
+
+describe.only('GET/api/articles/:article_id/comments', () => {
+  test('200: responds with an array of comments for the given article_id; each object should have correct properties', () => {
+    return request(app)
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment) => {
+          expect(comment).toHaveProperty('comment_id', expect.any(Number));
+          expect(comment).toHaveProperty('votes', expect.any(Number));
+          expect(comment).toHaveProperty('created_at', expect.any(String));
+          expect(comment).toHaveProperty('author', expect.any(String));
+          expect(comment).toHaveProperty('body', expect.any(String));
+          expect(comment).toHaveProperty('article_id', expect.any(Number));
+        });
+        expect(comments).toBeSortedBy('created_at', {descending: true});
+      });
+  });
+});
