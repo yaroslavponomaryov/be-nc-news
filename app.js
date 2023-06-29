@@ -7,7 +7,6 @@ const {
  } = require('./errors/errors');
 const { getAllTopics } = require('./controllers/topics.controller');
 const { getAllEndpoints } = require('./controllers/api.controller');
-const { getArticleById } = require('./controllers/articles.controller.js');
 const { getCommentsByArticleId } = require('./controllers/comments.controller');
 const { 
     getArticleById, 
