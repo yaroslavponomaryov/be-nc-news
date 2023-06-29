@@ -151,3 +151,25 @@ describe('GET/api/articles', () => {
       });
   });
 });
+describe('POST /api/articles/:article_id/comments', () => {
+  test('201: takes an object with properties of "username" and "body", responds with an added object', () => {
+    const testComment = {
+      username: 'lurker',
+      body: 'That is a fab article!'
+    }
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send(testComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { postedComment } = body
+        expect(postedComment).toMatchObject({
+          comment_id: 19,
+          body: 'That is a fab article!',
+          article_id: 1,
+          author: 'lurker',
+          votes: 0,
+        });
+      });
+  });
+});

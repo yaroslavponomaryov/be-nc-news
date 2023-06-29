@@ -41,5 +41,26 @@
       "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "desctiption" : "serves all the comments for particular article by its ID",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+        "comment_id": 74,
+        "body": "Eius dolor qui ut eligendi. Vero et animi consequatur placeat repudiandae ex dolores qui magni. Omnis magnam rerum molestiae. Nihil rerum ipsa error quibusdam. Qui temporibus quia quia. Natus necessitatibus numquam deserunt quisquam distinctio soluta consequatur.",
+        "article_id": 6,
+        "author": "cooljmessy",
+        "votes": 3,
+        "created_at": "2020-11-04T21:21:00.000Z"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments" : {
+    "desctiption" : "serves all the comments for particular article by its ID",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
