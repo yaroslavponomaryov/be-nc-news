@@ -17,6 +17,12 @@ exports.fetchArticleComments = (id) => {
 };
 
 exports.insertCommentByArticleId = (id, bodyObject) => {
+    if( 
+        typeof bodyObject[Object.keys(bodyObject)[0]] !== 'string' || 
+        typeof bodyObject[Object.keys(bodyObject)[1]] !== 'string'
+        ) {
+        return Promise.reject({status: 400, msg: 'Bad request'});
+    }
 
     const queryValues = [];
     const body = bodyObject.body;

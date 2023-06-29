@@ -152,11 +152,11 @@ describe('GET/api/articles', () => {
   });
 });
 describe('POST /api/articles/:article_id/comments', () => {
+  const testComment = {
+    username: 'lurker',
+    body: 'That is a fab article!'
+  }
   test('201: takes an object with properties of "username" and "body", responds with an added object', () => {
-    const testComment = {
-      username: 'lurker',
-      body: 'That is a fab article!'
-    }
     return request(app)
       .post('/api/articles/1/comments')
       .send(testComment)
@@ -171,5 +171,79 @@ describe('POST /api/articles/:article_id/comments', () => {
           votes: 0,
         });
       });
+  });
+
+  describe('Sad paths...', () => {
+    test('400: throws "Bad request" if "article_id" is NaN', () => {
+      return request(app)
+      .post('/api/articles/NaN/comments')
+      .send(testComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+    });
+    describe('Invalid inputs...', () => {
+      test('400: "Bad request if invalid object: does not have all required properties', () => {
+        const invalidComment = {
+          blahblah: 'lurker',
+          body: 'That is a fab article!'
+        }
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send(invalidComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
+        });
+      });
+      test('400: "Bad request if invalid object: less than 2 properties', () => {
+        const invalidComment = {
+          body: 'That is a fab article!'
+        }
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send(invalidComment)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Bad request');
+          });
+      });
+      test('400: "Bad request if invalid data types in the obj', () => {
+        const invalidComment = {
+          username: 'lurker',
+          body: []
+        }
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send(invalidComment)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Bad request');
+          });
+      });
+      test('404: "Bad request" if author is valid but does not exist', () => {
+        const invalidComment = {
+          username: 'slava',
+          body: 'That is a fab article!'
+        }
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send(invalidComment)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Not found');
+          });
+      });
+    });
+    test('404: responds with "Not found" when valid article_id but does not exist', () => {
+      return request(app)
+      .post('/api/articles/1243/comments')
+      .send(testComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+    });
   });
 });
