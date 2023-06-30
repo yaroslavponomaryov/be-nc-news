@@ -17,9 +17,9 @@ const {
     getAllArticles, 
     updateArticleVote
 } = require('./controllers/articles.controller.js');
+const { getAllUsers } = require('./controllers/users.controller');
 
 app.use(express.json());
-
 
 app.get('/api/', getAllEndpoints)
 
@@ -36,6 +36,8 @@ app.route('/api/articles/:article_id/comments')
     .post(addCommentByArticleId);
 
 app.delete('/api/comments/:comment_id', deleteCommentById);
+
+app.get('/api/users', getAllUsers);
 
 app.all('*', (_, res) => {
     res.status(404).send({status: 404, msg: 'Not found'})
