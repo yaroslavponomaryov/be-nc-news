@@ -9,7 +9,8 @@ const { getAllTopics } = require('./controllers/topics.controller');
 const { getAllEndpoints } = require('./controllers/api.controller');
 const { 
     getCommentsByArticleId, 
-    addCommentByArticleId 
+    addCommentByArticleId, 
+    deleteCommentById
 } = require('./controllers/comments.controller');
 const { 
     getArticleById, 
@@ -33,6 +34,8 @@ app.route('/api/articles/:article_id')
 app.route('/api/articles/:article_id/comments')
     .get(getCommentsByArticleId)
     .post(addCommentByArticleId);
+
+app.delete('/api/comments/:comment_id', deleteCommentById);
 
 app.all('*', (_, res) => {
     res.status(404).send({status: 404, msg: 'Not found'})

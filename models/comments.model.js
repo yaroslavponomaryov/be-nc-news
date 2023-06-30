@@ -46,3 +46,12 @@ exports.insertCommentByArticleId = (id, bodyObject) => {
             return rows[0];
         })
 };
+
+exports.removeComment = (id) => {
+    const queryToComments = `
+        DELETE from comments 
+        WHERE comment_id = $1 
+        RETURNING *;
+    `
+    return db.query(queryToComments, [id])
+}

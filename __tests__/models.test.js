@@ -378,3 +378,40 @@ describe('PATCH /api/articles/:article_id', () => {
     });
   });
 });
+describe('DELETE /api/comments/:comment_id', () => {
+  describe('happy path', () => {
+    test('204: responds with no content, removes comment from the database', () => {
+      return request(app)
+        .delete('/api/comments/3')
+        .expect(204)
+        .then(() => {
+          const queryToComments = `
+            SELECT * FROM comments 
+            WHERE comment_id = 3;
+          `
+          return db.query(queryToComments)
+        })
+        .then(({ rows }) => {
+          expect(rows).toEqual([])
+        })
+    });
+  });
+  describe('sad paths', () => {
+    test('400: "Bad request" when isNaN(comment_id)', () => {
+      return request(app)
+        .delete('/api/comments/NaN')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
+        });
+    });
+    test('404: "Not found" when valid comment_id, but does not exist', () => {
+      return request(app)
+      .delete('/api/comments/1001')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+    });
+  });
+});
