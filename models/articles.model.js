@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { checIdExists } = require('./models.utils');
 
 exports.fetchArticleById = (articleId) => {
     const query = `
