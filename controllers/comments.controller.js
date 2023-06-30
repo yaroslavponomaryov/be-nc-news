@@ -1,4 +1,5 @@
-const { fetchArticleComments, insertCommentByArticleId } = require("../models/comments.model");
+const { fetchArticleComments, insertCommentByArticleId, removeComment } = require("../models/comments.model");
+const { checIdExists } = require("../models/models.utils");
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const { article_id } = req.params;
@@ -18,4 +19,16 @@ exports.addCommentByArticleId = (req, res, next) => {
         })
         .catch(next)
 
+};
+
+exports.deleteCommentById = (req, res, next) => {
+    const { comment_id } = req.params;
+
+    const promises = [removeComment(comment_id), checIdExists('comments', 'comment_id', comment_id)]
+
+    Promise.all(promises)
+        .then(() => {
+            res.status(204).send();
+        })
+        .catch(next)
 };
