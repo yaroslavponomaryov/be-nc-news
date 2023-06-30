@@ -268,3 +268,113 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
   });
 });
+describe('PATCH /api/articles/:article_id', () => {
+  describe('happy paths', () => {
+    test('200: updates article votes value by article id when negative vote is passed', () => {
+      return request(app)
+        .patch('/api/articles/7')
+        .send({ inc_votes : -100 })
+        .expect(200)
+        .then(({ body }) => {
+          const { updatedArticle } = body;
+          expect(updatedArticle).toMatchObject({
+            article_id: 7,
+            title: 'Z',
+            topic: 'mitch',
+            author: 'icellusedkars',
+            body: 'I was hungry.',
+            created_at: '2020-01-07T14:08:00.000Z',
+            votes: -100,
+            article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+          })
+        })
+    });
+    test('200: updates article votes value by article id when positive vote is passed', () => {
+      return request(app)
+        .patch('/api/articles/1')
+        .send({ inc_votes : 50 })
+        .expect(200)
+        .then(({ body }) => {
+          const { updatedArticle } = body;
+          expect(updatedArticle).toMatchObject({
+            article_id: 1,
+            votes: 150,
+          });
+        });
+    });
+    test('200: ignores extra properties', () => {
+      return request(app)
+        .patch('/api/articles/7')
+        .send({ 
+          inc_votes : 50, 
+          author : 'slava',
+          postedFrom : 'iPhone'
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { updatedArticle } = body;
+          expect(updatedArticle).toMatchObject({
+            article_id: 7,
+            author: 'icellusedkars',
+            votes: 50
+          });
+        });
+    });
+  });
+  describe('sad paths', () => {
+    describe('url troubles', () => {
+      test('400: responds with "Bad request" when article_id is NaN', () => {
+        return request(app)
+          .patch('/api/articles/NaN')
+          .send({ inc_votes : 10 })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Bad request');
+          });
+      });
+      test('404: responds with "Not found" when article_id is valid, but does not exist', () => {
+        return request(app)
+        .patch('/api/articles/988')
+        .send({ inc_votes : 10 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not found');
+        });
+      });
+    });
+    describe('invalid inputs', () => {
+      test('400: responds with "Bad request" when no property of "inc_votes"', () => {
+        return request(app)
+          .patch('/api/articles/7')
+          .send({ 
+            inddsrc_votees : 50, 
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Bad request');
+          });
+      });
+      test('400: responds with "Bad request" when no invalid data type of "inc_votes"', () => {
+        return request(app)
+          .patch('/api/articles/7')
+          .send({ 
+            inddsrc_votees : '', 
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Bad request');
+          });
+      });
+      test('400: responds with "Bad request" when an empty object is passed', () => {
+        return request(app)
+          .patch('/api/articles/7')
+          .send({
+          })
+          .expect(400)
+          .then(({ body }) =>{
+            expect(body.msg).toBe('Bad request');
+          });
+      })
+    });
+  });
+});

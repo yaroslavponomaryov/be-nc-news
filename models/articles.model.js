@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { checIdExists } = require('./models.utils');
 
 exports.fetchArticleById = (articleId) => {
     const query = `
@@ -33,4 +34,17 @@ exports.fetchAllArticles = () => {
             .then(({rows})=> {
                     return rows;
             });
+};
+
+exports.patchArticleVote = (id, voteObj) => {
+    const queryValues = [voteObj.inc_votes, id];
+    const queryToArticles = `
+        UPDATE articles SET votes = articles.votes + $1 
+        WHERE article_id = $2 
+        RETURNING *;
+    `
+    return db.query(queryToArticles, queryValues)
+        .then(({ rows }) => {
+            return rows[0];
+        });
 };
