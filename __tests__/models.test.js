@@ -222,7 +222,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Bad request');
           });
       });
-      test('404: "Bad request" if author is valid but does not exist', () => {
+      test('404: "Not found" if author is valid but does not exist', () => {
         const invalidComment = {
           username: 'slava',
           body: 'That is a fab article!'
@@ -233,6 +233,27 @@ describe('POST /api/articles/:article_id/comments', () => {
           .expect(404)
           .then(({ body }) => {
             expect(body.msg).toBe('Not found');
+          });
+      });
+      test('201: ignores extra properties', () => {
+        const extraPropComment = {
+          username: 'lurker',
+          length: 22,
+          body: 'That is a fab article!'
+        }
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send(extraPropComment)
+          .expect(201)
+          .then(({ body }) => {
+            const { postedComment } = body;
+            expect(postedComment).toMatchObject({
+              comment_id: 19,
+              body: 'That is a fab article!',
+              article_id: 1,
+              author: 'lurker',
+              votes: 0,
+            });
           });
       });
     });
