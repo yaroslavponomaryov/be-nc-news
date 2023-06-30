@@ -302,9 +302,27 @@ describe('PATCH /api/articles/:article_id', () => {
           });
         });
     });
+    test('200: ignores extra properties', () => {
+      return request(app)
+        .patch('/api/articles/7')
+        .send({ 
+          inc_votes : 50, 
+          author : 'slava',
+          postedFrom : 'iPhone'
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { updatedArticle } = body;
+          expect(updatedArticle).toMatchObject({
+            article_id: 7,
+            author: 'icellusedkars',
+            votes: 50
+          });
+        });
+    });
   });
   describe('sad paths', () => {
-    describe('url rtoubles', () => {
+    describe('url troubles', () => {
       test('400: responds with "Bad request" when article_id is NaN', () => {
         return request(app)
           .patch('/api/articles/NaN')
@@ -325,24 +343,6 @@ describe('PATCH /api/articles/:article_id', () => {
       });
     });
     describe('invalid inputs', () => {
-      test('200: ignores extra properties', () => {
-        return request(app)
-          .patch('/api/articles/7')
-          .send({ 
-            inc_votes : 50, 
-            author : 'slava',
-            postedFrom : 'iPhone'
-          })
-          .expect(200)
-          .then(({ body }) => {
-            const { updatedArticle } = body;
-            expect(updatedArticle).toMatchObject({
-              article_id: 7,
-              author: 'icellusedkars',
-              votes: 50
-            });
-          });
-      });
       test('400: responds with "Bad request" when no property of "inc_votes"', () => {
         return request(app)
           .patch('/api/articles/7')
