@@ -13,9 +13,17 @@ exports.fetchArticleById = (articleId) => {
     });
 };
 
-exports.fetchAllArticles = () => {
+exports.fetchAllArticles = (topic, sort_by='created_at', order='desc') => {
 
-    const queryToArticles = `
+    const greenList = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'desc', 'asc'];
+
+    if (!greenList.includes(sort_by) || !greenList.includes(order)) {
+        return Promise.reject({status: 400, msg: 'Bad request'});
+    }
+
+    const queryValues = [];
+    
+    let queryToArticles = `
         SELECT 
             articles.article_id, 
             articles.author, 
@@ -26,14 +34,23 @@ exports.fetchAllArticles = () => {
             articles.article_img_url, 
         COUNT(comments.comment_id) AS comment_count 
         FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id 
-        GROUP BY articles.article_id
-        ORDER BY created_at DESC;
     `
-        return db
-            .query(queryToArticles)
-            .then(({rows})=> {
-                    return rows;
-            });
+    if (topic) {
+        queryValues.push(topic)
+        queryToArticles+=`
+        WHERE topic = $1  
+        `
+    };
+
+    queryToArticles+= `
+        GROUP BY articles.article_id 
+        ORDER BY ${sort_by} ${order};
+    `
+    return db
+        .query(queryToArticles, queryValues)
+        .then(({rows})=> {
+            return rows;
+        });
 };
 
 exports.patchArticleVote = (id, voteObj) => {

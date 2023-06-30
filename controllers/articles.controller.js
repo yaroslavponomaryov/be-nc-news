@@ -3,11 +3,13 @@ const {
     fetchAllArticles, 
     patchArticleVote 
 } = require("../models/articles.model");
-const { checIdExists } = require("../models/models.utils");
+const { 
+    checIdExists, 
+    checkTopicExists
+ } = require("../models/models.utils");
 
 exports.getArticleById = (req, res, next) => {
     const {article_id} = req.params;
-
     return fetchArticleById(article_id)
         .then((article)=> {
             res.status(200).send({ article })
@@ -16,11 +18,19 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-    return fetchAllArticles()
-        .then((articles) => {
-            res.status(200).send({articles})
+    const { topic } = req.query;
+    const { sort_by } = req.query;
+    const { order } = req.query;
+    const promises = [fetchAllArticles(topic, sort_by, order)];
+    if(topic) {
+        promises.push(checkTopicExists(topic));
+    }
+    Promise.all(promises)
+        .then((resolvedPromises)=> {
+            const articles = resolvedPromises[0];
+            res.status(200).send({ articles });
         })
-        .catch(next)
+        .catch(next);
 };
 
 exports.updateArticleVote = (req, res, next) => {
