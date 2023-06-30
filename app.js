@@ -13,7 +13,8 @@ const {
 } = require('./controllers/comments.controller');
 const { 
     getArticleById, 
-    getAllArticles 
+    getAllArticles, 
+    updateArticleVote
 } = require('./controllers/articles.controller.js');
 
 app.use(express.json());
@@ -25,7 +26,9 @@ app.get('/api/topics', getAllTopics);
 
 app.get('/api/articles/', getAllArticles);
 
-app.get('/api/articles/:article_id', getArticleById);
+app.route('/api/articles/:article_id')
+    .get(getArticleById)
+    .patch(updateArticleVote);
 
 app.route('/api/articles/:article_id/comments')
     .get(getCommentsByArticleId)

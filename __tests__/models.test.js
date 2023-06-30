@@ -268,3 +268,37 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
   });
 });
+describe('PATCH /api/articles/:article_id', () => {
+  test('200: updates article votes value by article id when negative vote is passed', () => {
+    return request(app)
+      .patch('/api/articles/7')
+      .send({ inc_votes : -100 })
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toMatchObject({
+          article_id: 7,
+          title: 'Z',
+          topic: 'mitch',
+          author: 'icellusedkars',
+          body: 'I was hungry.',
+          created_at: '2020-01-07T14:08:00.000Z',
+          votes: -100,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        })
+      })
+  });
+  test('200: updates article votes value by article id when positive vote is passed', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({ inc_votes : 50 })
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toMatchObject({
+          article_id: 1,
+          votes: 150,
+        });
+      });
+  });
+});
