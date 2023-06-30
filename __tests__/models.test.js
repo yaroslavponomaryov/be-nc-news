@@ -184,7 +184,7 @@ describe('POST /api/articles/:article_id/comments', () => {
       });
     });
     describe('Invalid inputs...', () => {
-      test('400: "Bad request if invalid object: does not have all required properties', () => {
+      test('400: "Bad request" if invalid object: does not have all required properties', () => {
         const invalidComment = {
           blahblah: 'lurker',
           body: 'That is a fab article!'
@@ -197,7 +197,7 @@ describe('POST /api/articles/:article_id/comments', () => {
           expect(body.msg).toBe('Bad request');
         });
       });
-      test('400: "Bad request if invalid object: less than 2 properties', () => {
+      test('400: "Bad request" if invalid object: less than 2 properties', () => {
         const invalidComment = {
           body: 'That is a fab article!'
         }
@@ -209,7 +209,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Bad request');
           });
       });
-      test('400: "Bad request if invalid data types in the obj', () => {
+      test('400: "Bad request" if invalid data types in the obj', () => {
         const invalidComment = {
           username: 'lurker',
           body: []
