@@ -150,6 +150,93 @@ describe('GET/api/articles', () => {
         expect(articles).toBeSortedBy('created_at', { descending: true })
       });
   });
+  describe('queries testing', () => {
+    describe('happy query paths', () => {
+      test('200: responds with an object containing articles filtered by topic', () => {
+        return request(app)
+          .get('/api/articles?topic=cats')
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles.length).toBe(1)
+            expect(articles[0]).toMatchObject({
+              topic: 'cats'
+            });
+          });
+      });
+      test('200: responds with an object containing articles filtered by topic', () => {
+        return request(app)
+          .get('/api/articles?sort_by=author')
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles.length).toBe(13)
+            expect(articles).toBeSortedBy('author', {descending : true});
+          });
+      });
+      test('200: responds with an object containing articles in ascending order', () => {
+        return request(app)
+          .get('/api/articles?order=asc')
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles.length).toBe(13)
+            expect(articles).toBeSortedBy('created_at');
+          });
+      });
+      test('200: responds with a correct object when multiple queries provided', () => {
+        return request(app)
+          .get('/api/articles?topic=mitch&order=asc&sort_by=title')
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles.length).toBe(12);
+            articles.forEach((article) => {
+              expect(article).toMatchObject({
+                topic : 'mitch'
+              });
+            });
+            expect(articles).toBeSortedBy('title');
+          });
+      });
+      test('200: ignores invalid queries', () => {
+        return request(app)
+        .get('/api/articles?sort_by=author&invalidquery=nonsense')
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles.length).toBe(13)
+          expect(articles).toBeSortedBy('author', {descending : true});
+        });
+      });
+    });
+    describe('sad query paths', () => {
+      test('404: "Not found" when invalid topic value', () => {
+        return request(app)
+          .get('/api/articles?topic=weather')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Not found')
+          });
+      });
+      test('400: "Bad request" when invalid sort_by value', () => {
+        return request(app)
+          .get('/api/articles?sort_by=rating')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Bad request')
+          });
+      });
+      test('400: "Bad request" when invalid order value', () => {
+        return request(app)
+          .get('/api/articles?order=mixed')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Bad request')
+          });
+      });
+    });
+  });
 });
 describe('POST /api/articles/:article_id/comments', () => {
   const testComment = {

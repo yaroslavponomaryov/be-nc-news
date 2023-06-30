@@ -4,7 +4,7 @@
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
-    "queries": [],
+    "queries": ["topic", "sort_by=created_at", "order=desc"],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
