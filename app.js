@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const { 
     handleServerErrors, 
     handlePsqlErrors,
@@ -18,6 +19,8 @@ const {
     updateArticleVote
 } = require('./controllers/articles.controller.js');
 const { getAllUsers } = require('./controllers/users.controller');
+
+app.use(cors());
 
 app.use(express.json());
 
